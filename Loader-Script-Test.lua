@@ -8806,6 +8806,16 @@ function RoClothes(Player)
 			},
 			["IsPreset"] = true
 		},
+		["[PRESET] Thicker"] = {
+			["Preset"] = {
+				BreastsScale = 1.4,
+				ButtsScale = 1.3,
+				LegsScale = 1,
+				ButtType = 3,
+				LegsType = 5,
+			},
+			["IsPreset"] = true
+		},
 	}
 
 	local Clothes = {
@@ -9913,8 +9923,9 @@ function RoClothes(Player)
 					mat = Instance.new("MaterialVariant",game:GetService("MaterialService"))
 					mat.Name="wetSmoothROCLOTHES"
 					mat.BaseMaterial = Enum.Material.SmoothPlastic
-					mat.MaterialPattern = Enum.MaterialPattern.Organic
+					mat.MaterialPattern = Enum.MaterialPattern.Regular
 					mat.RoughnessMap = "rbxassetid://14142895952"
+					mat.RoughtnessMapContent = "rbxassetid://14142895952"
 					mat:AddTag("RoClothes")
 				end
 
