@@ -1,134 +1,88 @@
--- 🌇 RealisticGraphicsLite.lua
--- Efeitos realistas otimizados para celulares fracos
--- Client-side: coloque em StarterPlayer > StarterPlayerScripts
+--[[ 🌈 SHADER RTX HD (FOCO FORTE + CORES VIVAS)
+Autor: ChatGPT | Executa automaticamente (client side)
+Coloque como LocalScript em StarterPlayerScripts
+--]]
 
 local Lighting = game:GetService("Lighting")
-local Players = game:GetService("Players")
-local UserInputService = game:GetService("UserInputService")
-local player = Players.LocalPlayer
-local playerGui = player:WaitForChild("PlayerGui")
+local RunService = game:GetService("RunService")
+local Player = game.Players.LocalPlayer
+local Camera = workspace.CurrentCamera
 
--- ⚙️ Iluminação base (leve e suave)
+-- 🧹 Limpa efeitos antigos
+for _, v in pairs(Lighting:GetChildren()) do
+	if v:IsA("PostEffect") or v:IsA("Atmosphere") then
+		v:Destroy()
+	end
+end
+
+-- ☀️ LUZ BASE REALISTA
 Lighting.GlobalShadows = true
-Lighting.EnvironmentDiffuseScale = 0.8
-Lighting.EnvironmentSpecularScale = 0.8
-Lighting.Brightness = 2
-Lighting.ClockTime = 17.5
-Lighting.FogStart = 120
-Lighting.FogEnd = 800
-Lighting.FogColor = Color3.fromRGB(85, 95, 110)
-Lighting.Ambient = Color3.fromRGB(60, 65, 75)
-Lighting.OutdoorAmbient = Color3.fromRGB(50, 55, 65)
+Lighting.Brightness = 1.35
 Lighting.ExposureCompensation = 0.1
+Lighting.EnvironmentDiffuseScale = 0.9
+Lighting.EnvironmentSpecularScale = 1
+Lighting.ClockTime = 15
+Lighting.GeographicLatitude = 45
+Lighting.Ambient = Color3.fromRGB(100, 100, 110)
+Lighting.OutdoorAmbient = Color3.fromRGB(135, 140, 145)
+Lighting.FogColor = Color3.fromRGB(180, 190, 205)
+Lighting.FogStart = 70
+Lighting.FogEnd = 700
 
--- 🌫️ Atmosfera simples
-local function make(parent, className, name)
-	local obj = parent:FindFirstChild(name)
-	if obj then return obj end
-	obj = Instance.new(className)
-	obj.Name = name
-	obj.Parent = parent
-	return obj
-end
+-- ☁️ ATMOSFERA SUAVE
+local atmosphere = Instance.new("Atmosphere", Lighting)
+atmosphere.Density = 0.32
+atmosphere.Offset = 0.15
+atmosphere.Color = Color3.fromRGB(205, 210, 225)
+atmosphere.Decay = Color3.fromRGB(95, 100, 110)
+atmosphere.Glare = 0.25
+atmosphere.Haze = 2.8
 
-local atmosphere = make(Lighting, "Atmosphere", "LiteAtmosphere")
-atmosphere.Density = 0.25
-atmosphere.Color = Color3.fromRGB(100, 110, 125)
-atmosphere.Decay = Color3.fromRGB(70, 75, 85)
-atmosphere.Glare = 0.05
-atmosphere.Haze = 0.25
+-- 🎨 COR MAIS FORTE E CONTRASTE
+local color = Instance.new("ColorCorrectionEffect", Lighting)
+color.Brightness = 0.05
+color.Contrast = 0.55   -- contraste reforçado
+color.Saturation = 0.45 -- cores mais vivas
+color.TintColor = Color3.fromRGB(255, 245, 230)
+color.Parent = Lighting
 
--- 🌌 Céu leve (usa skybox padrão com cor corrigida)
-local sky = make(Lighting, "Sky", "LiteSky")
-sky.SkyboxBk = "rbxassetid://151165214"
-sky.SkyboxDn = "rbxassetid://151165197"
-sky.SkyboxFt = "rbxassetid://151165224"
-sky.SkyboxLf = "rbxassetid://151165191"
-sky.SkyboxRt = "rbxassetid://151165206"
-sky.SkyboxUp = "rbxassetid://151165227"
+-- 💫 BLOOM EQUILIBRADO (brilho controlado)
+local bloom = Instance.new("BloomEffect", Lighting)
+bloom.Intensity = 0.25
+bloom.Size = 25
+bloom.Threshold = 0.9
+bloom.Parent = Lighting
 
--- ✨ Efeitos leves (baixo impacto no desempenho)
-local bloom = make(Lighting, "BloomEffect", "LiteBloom")
-bloom.Intensity = 0.4
-bloom.Size = 12
-bloom.Threshold = 1
+-- 🌞 RAIOS DE SOL NATURAIS
+local sunrays = Instance.new("SunRaysEffect", Lighting)
+sunrays.Intensity = 0.07
+sunrays.Spread = 0.85
+sunrays.Parent = Lighting
 
-local cc = make(Lighting, "ColorCorrectionEffect", "LiteColor")
-cc.TintColor = Color3.fromRGB(230, 235, 250)
-cc.Contrast = 0.1
-cc.Saturation = -0.05
-cc.Brightness = 0.02
+-- 🪞 SHARPNESS EXTRA (textura HD)
+local sharpness = Instance.new("ColorCorrectionEffect", Lighting)
+sharpness.Contrast = 0.25
+sharpness.Saturation = 0.2
+sharpness.TintColor = Color3.fromRGB(255, 255, 245)
+sharpness.Parent = Lighting
 
--- (sem DOF, sem SunRays — muito leves mas removidos pra desempenho)
+-- 🎥 FOCO CINEMATOGRÁFICO (FORTEMENTE REALISTA)
+local depth = Instance.new("DepthOfFieldEffect", Lighting)
+depth.InFocusRadius = 12
+depth.NearIntensity = 0.25
+depth.FarIntensity = 0.6
+depth.FocusDistance = 25
+depth.Parent = Lighting
 
--- 💡 Luz ambiente exemplo (muito leve)
-task.spawn(function()
-	local workspace = game:GetService("Workspace")
-	if not workspace:FindFirstChild("LiteLights") then
-		local folder = Instance.new("Folder")
-		folder.Name = "LiteLights"
-		folder.Parent = workspace
-
-		local part = Instance.new("Part")
-		part.Name = "LiteLamp"
-		part.Anchored = true
-		part.CanCollide = false
-		part.Transparency = 1
-		part.Position = Vector3.new(0, 10, 0)
-		part.Parent = folder
-
-		local light = Instance.new("PointLight")
-		light.Color = Color3.fromRGB(200, 210, 255)
-		light.Range = 18
-		light.Brightness = 2.2
-		light.Shadows = false
-		light.Parent = part
+-- 🔁 Atualiza o foco conforme a distância da câmera
+RunService.RenderStepped:Connect(function()
+	if Camera and Player.Character and Player.Character:FindFirstChild("Head") then
+		local head = Player.Character.Head
+		local dist = (Camera.CFrame.Position - head.Position).Magnitude
+		depth.FocusDistance = math.clamp(dist, 10, 60)
 	end
 end)
 
--- 🔘 Botão ON/OFF (mobile) e tecla K (PC)
-local enabled = true
-local function toggle(state)
-	for _, v in pairs(Lighting:GetChildren()) do
-		if v:IsA("PostEffect") or v:IsA("Atmosphere") then
-			v.Enabled = state
-		end
-	end
-	enabled = state
-end
+Lighting.ShadowSoftness = 0.25
 
-local function createButton()
-	local gui = Instance.new("ScreenGui")
-	gui.Name = "LiteToggle"
-	gui.ResetOnSpawn = false
-	gui.Parent = playerGui
-
-	local button = Instance.new("TextButton")
-	button.Size = UDim2.new(0, 120, 0, 40)
-	button.Position = UDim2.new(0.03, 0, 0.83, 0)
-	button.Text = "Shaders: ON"
-	button.Font = Enum.Font.GothamSemibold
-	button.TextSize = 18
-	button.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-	button.TextColor3 = Color3.fromRGB(235, 235, 235)
-	button.AutoButtonColor = false
-	button.Parent = gui
-
-	button.MouseButton1Click:Connect(function()
-		enabled = not enabled
-		toggle(enabled)
-		button.Text = enabled and "Shaders: ON" or "Shaders: OFF"
-	end)
-end
-
-UserInputService.InputBegan:Connect(function(input, gp)
-	if gp then return end
-	if input.KeyCode == Enum.KeyCode.K then
-		enabled = not enabled
-		toggle(enabled)
-	end
-end)
-
-if UserInputService.TouchEnabled then
-	createButton()
-end
+print("✅ Shader RTX HD com FOCO FORTE + CORES VIVAS carregado!")
