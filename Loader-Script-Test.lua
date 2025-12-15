@@ -1,7 +1,7 @@
 --[[	
 
 	/ ＲＯＣＬＯＴＨＥＳ
-	Version - 0.7.7:lerp()
+	Version - 0.7.7:lerp("Realistic")
 	Link - discord.gg/HBzvWE6Rp3
 	
 	| This script requires a LOCAL folder "RClothesContent" to be added in ROBLOX's content folder, or it'll self-destruct itself
@@ -84,7 +84,7 @@
 local RS = game:GetService("RunService")
 
 function RoClothes(Player)
-	warn("RoClothes Connected")
+	warn('RoClothes:Lerp("Realistic") Connected')
 
 	--[[
 	--------------------------------------------------------------------------------------------------------------
@@ -504,7 +504,7 @@ function RoClothes(Player)
 	local NPCs = {}
 
 	local PositionPhysicsMultiply = 1
-	local RotationPhysicsMultiply = 4
+	local RotationPhysicsMultiply = 10
 
 	local Function = {Spring = {}}
 
@@ -1994,6 +1994,27 @@ function RoClothes(Player)
 					[1] = "Torso",
 				},
 			},
+			---
+
+			["Chubby"] = {
+				["Instance"] = "Mesh",
+				["Name"] = "haha",
+				["MeshId"] = "rbxassetid://6583261022",
+				["Size"] = Vector3.new(1.987, 1.386, 1.071),
+				["CFrame"] = CFrame.new(0, -0.454, -0.495, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+				["Transparency"] = 0,
+				["Material"] = Enum.Material.SmoothPlastic,
+				["Color"] = {
+					["Tone"] = "Base",
+					["Color"] = "Parent",
+				},
+				["Recolor"] = "Primary",    
+				["Parent"] = {
+					[1] = "Torso",
+				},
+			},
+
+			---
 			["School Collor"] = {
 				["Instance"] = "Mesh",
 				["Name"] = "Collor",
@@ -3443,6 +3464,30 @@ function RoClothes(Player)
 				["AdjustScale"] = {"Size", "CFrame", ["CFrame1"] = 4.5},
 				["Function"] = {"TorsoShirtTexture", "BreastPhysics"}
 			}, 
+			
+			["Erected Breasts Shirt"] = {
+				["Instance"] = "Mesh",
+				["Name"] = "Breasts Shirt",
+				["Size"] = Vector3.new(2.267, 1.649, 1.634),
+				["CFrame"] = CFrame.new(0, 0.428, -1) * CFrame.Angles(-0.222, 0, -0.013),
+				["CFrame1"] = CFrame.new(0, 0.3, 0),
+				["Transparency"] = 0,
+				["Material"] = Enum.Material.SmoothPlastic,
+				["MeshId"] = "rbxassetid://10967484907",
+				["DoubleSided"] = true,
+				["Color"] = {	
+					["Tone"] = "Base",
+					["Color"] = "Parent"
+				},
+				["Parent"] = {
+					[1] = "Torso"
+				},
+				["Scale"] = "BreastsScale",
+				["AdjustScale"] = {"Size", "CFrame", ["CFrame1"] = 4.5},
+				["Function"] = {"TorsoShirtTexture", "BreastPhysics"}
+			},
+			
+			
 			["Breasts Pants"] = {
 				["Instance"] = "Mesh",
 				["Name"] = "Breasts Pants",
@@ -8365,6 +8410,30 @@ function RoClothes(Player)
 				6216526940
 			}
 		},
+		["Whiteyo"] = {
+			["Body Color"] = {
+				["HeadColor3"] = Color3.fromRGB(255, 255, 255),
+				["LeftArmColor3"] = Color3.fromRGB(255, 255, 255),
+				["RightArmColor3"] = Color3.fromRGB(255, 255, 255),
+				["LeftLegColor3"] = Color3.fromRGB(255, 255, 255),
+				["RightLegColor3"] = Color3.fromRGB(255, 255, 255),
+				["TorsoColor3"] = Color3.fromRGB(255, 255, 255),
+			},
+			["Accessory"] = {
+				77336991335204,
+				7485988593,
+				133174818398284,
+				113317304239893
+			},
+			["Clothing"] = {
+				"Roblox Breasts Clothing",
+				"Roblox Shirt",
+				"Roblox Pants",
+			},
+			["Clothes"] = {
+				["Pants"] = 129143372997561,
+			},
+		},
 		["White 3"] = {
 			["Body Color"] = {
 				["HeadColor3"] = Color3.fromRGB(255, 204, 153),
@@ -8608,6 +8677,50 @@ function RoClothes(Player)
 				"Glove"
 			}
 		},
+		["Ronette"] = {
+			["Body Color"] = {
+				["HeadColor3"] = Color3.fromRGB(248, 248, 248),
+				["LeftArmColor3"] = Color3.fromRGB(248, 248, 248),
+				["RightArmColor3"] = Color3.fromRGB(248, 248, 248),
+				["LeftLegColor3"] = Color3.fromRGB(248, 248, 248),
+				["RightLegColor3"] = Color3.fromRGB(248, 248, 248),
+				["TorsoColor3"] = Color3.fromRGB(248, 248, 248),
+			},
+			["Accessory"] = {
+				73920315327827,
+				9299351782,
+				7104751771
+			},
+			["Clothing"] = {
+				"Roblox Breasts Clothing",
+				"Roblox Shirt",
+				"Roblox Pants",
+			},
+			["Clothes"] = {
+				["Pants"] = 18974494627,
+			},
+			["Preset"] = {
+				Tone = "Tone",
+				Face = true,
+				BodyPartPhysics = true,
+				PhysicsObeyGravity = true,
+				PositionPhysicsMultiply = 1.2,
+				RotationPhysicsMultiply = 3.8,
+				BreastsScale = 1.3,
+				ButtsScale = 1.3,
+				LegsScale = 1.3,
+				BreastsType = 1,
+				TorsoType = 1,
+				ArmType = 1,
+				LegsType = 3,
+				ButtType = 3,
+				HardcoreHP = false,
+				TopHP = 50,
+				BottomHP = 50,
+				DamageSFX = "5",
+				Volume = 1.2,
+			}
+		},
 		-- Clothing Bundles --
 		["Roblox Clothing"] = {
 			["Clothing"] = {
@@ -8806,19 +8919,38 @@ function RoClothes(Player)
 			},
 			["IsPreset"] = true
 		},
-		["[PRESET] Thicker"] = {
+
+		["[PRESET] Thicc2"] = {
 			["Preset"] = {
-				BreastsScale = 1.4,
-				ButtsScale = 1.3,
-				LegsScale = 1,
+				ButtsScale = 1.2,
+				LegsScale = 1.2,
+				BreastsScale = 1.2,
 				ButtType = 3,
-				LegsType = 5,
+				LegsType = 2
+			},
+			["IsPreset"] = true
+		},
+
+		["Nova's Body Type"] = {
+			["Preset"] = {
+				BreastsScale = 1.3,
+				ButtsScale = 1.3,
+				LegsScale = 1.3,
+				ButtType = 3,
+				LegsType = 3,
 			},
 			["IsPreset"] = true
 		},
 	}
 
 	local Clothes = {
+
+		["Chubby"] = {
+			["Weld"] = {
+				[1] = "Chubby",
+			}
+		},
+
 		["School Shirt"] = {
 			["Weld"] = {
 				[1] = "School Shirt",
@@ -9067,6 +9199,20 @@ function RoClothes(Player)
 				"Right Breast",
 			}
 		},
+		--ERECTED NIPPLE PART!
+		["Erected Clothing [SHIRT]"] = {
+			["Weld"] = {
+				[1] = "Breasts Pants",
+				[2] = "Erected Breasts Shirt",
+			},
+			["Unvisible"] = {
+				"Left Nipple",
+				"Right Nipple",
+				"Left Breast",
+				"Right Breast",
+			}
+		},
+		
 		["Roblox Shirt"] = {
 			["Weld"] = {
 				[1] = "Torso Shirt",
@@ -9863,7 +10009,7 @@ function RoClothes(Player)
 			{NumberSequenceKeypoint.new(0,1.5,1),
 				NumberSequenceKeypoint.new(1,1.5,1)}
 		)
-		particle.Texture = "rbxasset://RClothesContent/16235774309.png"
+		particle.Texture = "rbxasset://splashspritetest4x4_2.png"
 		particle.Transparency = NumberSequence.new(
 			{NumberSequenceKeypoint.new(0,1),
 				NumberSequenceKeypoint.new(.2,.5),
@@ -9873,6 +10019,8 @@ function RoClothes(Player)
 		particle.LightInfluence = 1
 		particle.Lifetime = NumberRange.new(2,6)
 		particle.Rate = 10
+		particle.FlipbookLayout = Enum.ParticleFlipbookLayout.Grid4x4
+		particle.FlipbookFramerate = NumberRange.new(5, 10)
 		particle.Rotation = NumberRange.new(-360,360)
 		particle.Speed = NumberRange.new(0.001)
 		task.delay(0,function()
@@ -9884,10 +10032,14 @@ function RoClothes(Player)
 		local particle = Instance.new("ParticleEmitter",ObjectInstance)
 		particle.Orientation = Enum.ParticleOrientation.VelocityParallel
 		particle.LightEmission = .1
-		particle.LightInfluence = 1
-		particle.EmissionDirection = Enum.NormalId.Bottom
+		particle.LightInfluence = .5
+		particle.EmissionDirection = Enum.NormalId.Right
 		particle.Size = NumberSequence.new(.05)
-		particle.Texture = "http://www.roblox.com/asset/?id=296981321"
+		particle.Speed = NumberRange.new(15, 15)
+		particle.Texture = "rbxasset://splashspritetest4x4_2.png"
+
+		particle.FlipbookLayout = Enum.ParticleFlipbookLayout.Grid4x4
+
 		particle.Squash = NumberSequence.new(
 			{NumberSequenceKeypoint.new(0,.7),
 				NumberSequenceKeypoint.new(.752,.95),
@@ -9901,9 +10053,9 @@ function RoClothes(Player)
 				NumberSequenceKeypoint.new(1,1)}
 		)
 		particle.Lifetime = NumberRange.new(.5)
-		particle.Rate = 100
+		particle.Rate = math.huge
 		particle.Rotation = NumberRange.new(90)
-		particle.Speed = NumberRange.new(1,1.5)
+		particle.Speed = NumberRange.new(5,5)
 		particle.SpreadAngle = Vector2.new(-10,10)
 		particle.Acceleration = Vector3.new(0,-25,0)
 		particle.Drag = 2
@@ -9923,14 +10075,16 @@ function RoClothes(Player)
 					mat = Instance.new("MaterialVariant",game:GetService("MaterialService"))
 					mat.Name="wetSmoothROCLOTHES"
 					mat.BaseMaterial = Enum.Material.SmoothPlastic
-					mat.MaterialPattern = Enum.MaterialPattern.Regular
+					mat.MaterialPattern = Enum.MaterialPattern.Organic
 					mat.RoughnessMap = "rbxassetid://14142895952"
-					mat.RoughtnessMapContent = "rbxassetid://14142895952"
 					mat:AddTag("RoClothes")
 				end
 
-				v.Material = Enum.Material.SmoothPlastic
-				v.MaterialVariant = "wetSmoothROCLOTHES"
+				if v.Name == "Breasts Shirt" and v.Name == "Breasts Pants" and v.Name == "Right Leg Mesh" and v.Name == "Left Leg Mesh" and v.Name == "Right Arm Mesh" and v.Name == "Left Arm Mesh" then
+					--???
+				else
+					v.MaterialVariant = "wetSmoothROCLOTHES"
+				end
 				if v:FindFirstChildOfClass("SurfaceAppearance") then
 					v.TextureID = v:FindFirstChildOfClass("SurfaceAppearance").ColorMap
 					if v:FindFirstChildOfClass("SurfaceAppearance").AlphaMode == Enum.AlphaMode.Transparency then
@@ -14222,7 +14376,7 @@ function RoClothes(Player)
 		end)
 
 		local DestroyConnect = GUIObject.DestroyButton.MouseButton1Click:Connect(function()
-			local BreakerInstance = Instance.new("BoolValue", game.workspace)
+			local BreakerInstance = Instance.new("BoolValue", game.Workspace)
 			BreakerInstance.Name = "RoClothesBreaker"
 			game:GetService("Debris"):AddItem(BreakerInstance,2)
 		end)
@@ -17468,8 +17622,10 @@ function RoClothes(Player)
 		loadtxt.TextColor3 = Color3.new(1,1,1)
 		loadtxt.TextScaled = true
 		loadtxt.Size = UDim2.new(1,0,1,0)
-		loadtxt.Text = "loading"
-		debounce += 1
+		loadtxt.Text = 'RoClothes:Lerp("Realistic") Loading!'
+		game:GetService("TweenService"):Create(loadtxt, TweenInfo.new(5), {TextTransparency = 1}):Play()
+		game:GetService("Debris"):AddItem(loadui,25)
+
 	until debounce >= 50 or load.IsLoaded == true
 	if loadtxt then
 		loadtxt:Destroy()
@@ -17478,25 +17634,28 @@ function RoClothes(Player)
 		GUIObject.Screen.Enabled = false
 		local BREAKER = Instance.new("BoolValue")
 		BREAKER.Name = "RoClothesBreaker"
-		BREAKER.Parent = game.workspace
+		BREAKER.Parent = game.Workspace
 		if oload.IsLoaded == true then
 			local txt = Instance.new("TextLabel",loadui)
 			txt.BackgroundTransparency = 1
 			txt.TextColor3 = Color3.new(1,1,1)
 			txt.TextScaled = true
 			txt.Size = UDim2.new(1,0,1,0)
-			txt.Text = "WRONG VERSION FILES ARE LOADED"
-			game:GetService("Debris"):AddItem(loadui,2)
-			warn("WRONG VERSION FILES ARE LOADED")
+			txt.Text = "oopsies wrong version files!!!"
+			game:GetService("TweenService"):Create(txt, TweenInfo.new(5), {TextTransparency = 1}):Play()
+			game:GetService("Debris"):AddItem(loadui,10)
+			warn("oopsies wrong version files! Please download a new one!")
 		else
 			local txt = Instance.new("TextLabel",loadui)
 			txt.BackgroundTransparency = 1
 			txt.TextColor3 = Color3.new(1,1,1)
 			txt.TextScaled = true
 			txt.Size = UDim2.new(1,0,1,0)
-			txt.Text = "FILES ARE NOT LOADED CORRECTLY"
-			game:GetService("Debris"):AddItem(loadui,2)
-			warn("FILES ARE NOT LOADED CORRECTLY")
+			txt.Text = 'oopsies the file are not loaded correctly!, type "/console" in the chat or press "F9" on the keyboard!'
+			game:GetService("TweenService"):Create(txt, TweenInfo.new(5), {TextTransparency = 1}):Play()
+			game:GetService("Debris"):AddItem(loadui,10)
+			warn("oopsies the file are not loaded correctly!")
+			warn('make sure to put the "RClothesContent" into the Roblox (or any bloxstrap or bloxstrap mod) content file!')
 		end
 	else
 		GUIObject.Screen.Enabled = true
@@ -17520,7 +17679,7 @@ function RoClothes(Player)
 				GUIObject.Screen:Destroy()
 				GUIObject.MobileCloseButtonScreen:Destroy()
 				BreakerObject:Destroy()
-				warn("RoClothes Disconnected")
+				warn('RoClothes:Lerp("Realistic") destroyed oh no!!!')
 				break
 			end
 		end
