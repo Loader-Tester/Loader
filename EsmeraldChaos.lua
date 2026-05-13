@@ -40,7 +40,6 @@ local MAX_FAST_SPEED = 3.5
 local SPEED_TRANSITION = 1.5
 local speedTweenConnection = nil
 
--- Transição spawn -> órbita (suave, sem corte)
 local spawnToOrbitProgress = 0
 local SPAWN_TO_ORBIT_DURATION = 1.0
 local spawnToOrbitStart = 0
@@ -208,63 +207,68 @@ local function destroyAllEmeralds()
     emeraldFolder = nil
 end
 
--- ================= SPAWN DE 1 ANEL =================
-local function spawnSingleRing(rootPart)
+-- ================= SPAWN DE 2 ANÉIS =================
+local function spawnRingsOnDeath(rootPart)
     if ringsAlreadySpawned then return end
     ringsAlreadySpawned = true
     if not rootPart then return end
     
     local bodyPosition = rootPart.Position
     
-    local sucesso, ringModel = pcall(function()
-        return game:GetObjects("rbxassetid://" .. RING_ID)
-    end)
-    
-    if sucesso and ringModel and ringModel[1] then
-        local ring = ringModel[1]:Clone()
-        
-        for _, obj in ipairs(ring:GetDescendants()) do
-            if obj:IsA("LuaSourceContainer") or obj:IsA("Weld") or obj:IsA("Motor6D") or obj:IsA("Attachment") or obj:IsA("Accessory") then
-                obj:Destroy()
+    for i = 1, 2 do
+        task.spawn(function()
+            local sucesso, ringModel = pcall(function()
+                return game:GetObjects("rbxassetid://" .. RING_ID)
+            end)
+            
+            if sucesso and ringModel and ringModel[1] then
+                local ring = ringModel[1]:Clone()
+                
+                for _, obj in ipairs(ring:GetDescendants()) do
+                    if obj:IsA("LuaSourceContainer") or obj:IsA("Weld") or obj:IsA("Motor6D") or obj:IsA("Attachment") or obj:IsA("Accessory") then
+                        obj:Destroy()
+                    end
+                end
+                
+                local theta = math.random() * math.pi * 2
+                local phi = math.random() * math.pi
+                local force = 25 + math.random() * 15
+                local direction = Vector3.new(
+                    math.sin(phi) * math.cos(theta),
+                    math.abs(math.cos(phi)) * 1.5,
+                    math.sin(phi) * math.sin(theta)
+                ).Unit
+                local velocity = direction * force + Vector3.new(0, 18, 0)
+                
+                for _, part in ipairs(ring:GetDescendants()) do
+                    if part:IsA("BasePart") or part:IsA("MeshPart") then
+                        part.Anchored = false
+                        part.CanCollide = true
+                        part.CFrame = CFrame.new(bodyPosition)
+                        part.Size = part.Size * 0.5
+                        part.Velocity = velocity
+                        part.RotVelocity = Vector3.new(
+                            math.random(-30, 30),
+                            math.random(-30, 30),
+                            math.random(-30, 30)
+                        )
+                    end
+                end
+                
+                ring.Parent = workspace
+                
+                task.wait(2.0)
+                for _, part in ipairs(ring:GetDescendants()) do
+                    if part:IsA("BasePart") or part:IsA("MeshPart") then
+                        TweenService:Create(part, TweenInfo.new(0.5), {Transparency = 1}):Play()
+                    end
+                end
+                task.wait(0.6)
+                pcall(function() ring:Destroy() end)
+                pcall(function() ringModel[1]:Destroy() end)
             end
-        end
-        
-        local theta = math.random() * math.pi * 2
-        local phi = math.random() * math.pi
-        local force = 30
-        local direction = Vector3.new(
-            math.sin(phi) * math.cos(theta),
-            math.abs(math.cos(phi)) * 1.5,
-            math.sin(phi) * math.sin(theta)
-        ).Unit
-        local velocity = direction * force + Vector3.new(0, 20, 0)
-        
-        for _, part in ipairs(ring:GetDescendants()) do
-            if part:IsA("BasePart") or part:IsA("MeshPart") then
-                part.Anchored = false
-                part.CanCollide = true
-                part.CFrame = CFrame.new(bodyPosition)
-                part.Size = part.Size * 0.5
-                part.Velocity = velocity
-                part.RotVelocity = Vector3.new(
-                    math.random(-30, 30),
-                    math.random(-30, 30),
-                    math.random(-30, 30)
-                )
-            end
-        end
-        
-        ring.Parent = workspace
-        
-        task.wait(2.0)
-        for _, part in ipairs(ring:GetDescendants()) do
-            if part:IsA("BasePart") or part:IsA("MeshPart") then
-                TweenService:Create(part, TweenInfo.new(0.5), {Transparency = 1}):Play()
-            end
-        end
-        task.wait(0.6)
-        pcall(function() ring:Destroy() end)
-        pcall(function() ringModel[1]:Destroy() end)
+        end)
+        task.wait(0.06)
     end
 end
 
@@ -309,14 +313,21 @@ local function scheduleRandomSpeedBoost()
     end)
 end
 
--- ================= ANIMAÇÃO DE SPAWN =================
+-- ================= ANIMAÇÃO DE SPAWN (BONECO PRESO 0.5s) =================
 local function playSpawnAnimation(emeraldData, character)
     local root = character:WaitForChild("HumanoidRootPart")
+    local humanoid = character:WaitForChild("Humanoid")
     playSound(SPAWN_SOUND_ID, root)
     
     ringsAlreadySpawned = false
     deathProcessed = false
     deathProcessing = false
+    
+    -- TRAVA O BONECO por 0.5 segundos
+    local oldWalkSpeed = humanoid.WalkSpeed
+    local oldJumpPower = humanoid.JumpPower
+    humanoid.WalkSpeed = 0
+    humanoid.JumpPower = 0
     
     for i, data in ipairs(emeraldData) do
         if data.emeraldClone and data.emeraldClone.Parent then
@@ -363,9 +374,15 @@ local function playSpawnAnimation(emeraldData, character)
         end
         task.wait(0.12)
     end
+    
+    -- Espera 0.5s e libera o boneco
+    task.wait(0.5)
+    humanoid.WalkSpeed = oldWalkSpeed
+    humanoid.JumpPower = oldJumpPower
+    
     task.wait(0.3)
     
-    -- Giro no chão + começa a subir = INICIA ÓRBITA
+    -- Inicia órbita
     isOrbiting = true
     orbitStartTime = tick()
     spawnToOrbitProgress = 0
@@ -375,12 +392,11 @@ local function playSpawnAnimation(emeraldData, character)
     scheduleRandomSpeedBoost()
 end
 
--- ================= ÓRBITA COM TRANSIÇÃO SUAVE DO SPAWN =================
+-- ================= ÓRBITA COM TRANSIÇÃO SUAVE =================
 local function updateOrbita(data, i, root, currentTime)
     if not data.emeraldClone or not data.emeraldClone.Parent then return end
     if not data.mainPart or not data.mainPart.Parent then return end
     
-    -- Atualiza progresso da transição
     if spawnToOrbitProgress < 1 then
         local elapsed = tick() - spawnToOrbitStart
         spawnToOrbitProgress = math.min(elapsed / SPAWN_TO_ORBIT_DURATION, 1)
@@ -397,14 +413,12 @@ local function updateOrbita(data, i, root, currentTime)
     local targetX = math.cos(angle) * radius
     local targetZ = math.sin(angle) * radius
     
-    -- Posição inicial (chão)
     local groundX = math.cos(fixedAngle) * 4.5
     local groundZ = math.sin(fixedAngle) * 4.5
     local groundY = -3
     
-    -- Interpola suavemente do chão para órbita (ease out)
     local t = spawnToOrbitProgress
-    local easedT = 1 - (1 - t) * (1 - t) -- Ease out quad
+    local easedT = 1 - (1 - t) * (1 - t)
     
     local finalX = groundX + (targetX - groundX) * easedT
     local finalY = groundY + (targetY - groundY) * easedT
@@ -453,7 +467,8 @@ local function onDeath(character)
     local root = character:FindFirstChild("HumanoidRootPart")
     if root then playSound(DEATH_SOUND_ID, root) end
     
-    spawnSingleRing(root)
+    -- 2 ANÉIS
+    spawnRingsOnDeath(root)
     
     local deathData = {}
     for _, data in ipairs(allEmeraldData) do table.insert(deathData, data) end
@@ -685,4 +700,4 @@ lp.CharacterAdded:Connect(function(character)
     CarregarEsmeraldas()
 end)
 
-print("💎 Transição SUAVE spawn->órbita + Órbita original + 1 anel!")
+print("💎 Boneco preso 0.5s no spawn + 2 anéis na morte!")
