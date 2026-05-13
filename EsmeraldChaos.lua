@@ -81,27 +81,55 @@ local function setModelCFrame(model, mainPart, targetCFrame)
     end
 end
 
--- Cria trail em uma parte
-local function createTrailOnPart(part, color)
-    local attachment0 = Instance.new("Attachment")
-    attachment0.Parent = part
+-- ═══════════════════════════════════════════════
+-- TRAIL PREMIUM - Cor da esmeralda, pontas finas
+-- ═══════════════════════════════════════════════
+local function createPremiumTrail(part, color)
+    local attach0 = Instance.new("Attachment")
+    attach0.Position = Vector3.new(0, 0, 0.5)
+    attach0.Parent = part
     
-    local attachment1 = Instance.new("Attachment")
-    attachment1.Position = Vector3.new(0, -0.3, 0)
-    attachment1.Parent = part
+    local attach1 = Instance.new("Attachment")
+    attach1.Position = Vector3.new(0, 0, -0.5)
+    attach1.Parent = part
     
     local trail = Instance.new("Trail")
-    trail.Attachment0 = attachment0
-    trail.Attachment1 = attachment1
-    trail.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), color)
-    trail.Transparency = NumberSequence.new(0.3, 0.9)
-    trail.Lifetime = 0.4
-    trail.MinLength = 0.05
-    trail.MaxLength = 0.8
-    trail.WidthScale = NumberSequence.new(0.3, 0.05)
-    trail.Parent = part
+    trail.Attachment0 = attach0
+    trail.Attachment1 = attach1
     
+    -- Apenas a cor da esmeralda (sem branco)
+    trail.Color = ColorSequence.new(color)
+    
+    trail.Transparency = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 0.1),
+        NumberSequenceKeypoint.new(0.5, 0.5),
+        NumberSequenceKeypoint.new(1, 1)
+    })
+    
+    trail.Lifetime = 0.5
+    trail.MinLength = 0.1
+    trail.MaxLength = 1.5
+    trail.FaceCamera = true
+    trail.Enabled = false -- COMEÇA DESLIGADO
+    
+    trail.TextureMode = Enum.TextureMode.Stretch
+    trail.WidthScale = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 0.5),
+        NumberSequenceKeypoint.new(0.5, 0.2),
+        NumberSequenceKeypoint.new(1, 0.01)
+    })
+    
+    trail.Parent = part
     return trail
+end
+
+-- Liga/desliga todos os trails
+local function setAllTrails(enabled)
+    for _, data in ipairs(allEmeraldData) do
+        if data.trail then
+            data.trail.Enabled = enabled
+        end
+    end
 end
 
 local function createHighlight(emeraldClone, color)
@@ -295,12 +323,18 @@ local function spawnRingsOnDeath(rootPart)
     end
 end
 
--- ================= TWEEN DE VELOCIDADE =================
+-- ================= TWEEN DE VELOCIDADE (com trail) =================
 local function tweenSpeed(novaVelocidade)
     targetSpeed = novaVelocidade
     if speedTweenConnection then speedTweenConnection:Disconnect() end
     local startSpeed = currentSpeed
     local startTime = tick()
+    
+    -- ATIVA trails ao acelerar
+    if novaVelocidade > NORMAL_SPEED then
+        setAllTrails(true)
+    end
+    
     speedTweenConnection = RunService.Heartbeat:Connect(function()
         local elapsed = tick() - startTime
         local progress = math.min(elapsed / SPEED_TRANSITION, 1)
@@ -311,10 +345,16 @@ local function tweenSpeed(novaVelocidade)
             easedProgress = 1 - (-2 * progress + 2) * (-2 * progress + 2) / 2
         end
         currentSpeed = startSpeed + (targetSpeed - startSpeed) * easedProgress
+        
         if progress >= 1 then
             currentSpeed = targetSpeed
             speedTweenConnection:Disconnect()
             speedTweenConnection = nil
+            
+            -- DESATIVA trails ao voltar ao normal
+            if currentSpeed <= NORMAL_SPEED + 0.01 then
+                setAllTrails(false)
+            end
         end
     end)
 end
@@ -346,7 +386,6 @@ local function playSpawnAnimation(emeraldData, character)
     deathProcessed = false
     deathProcessing = false
     
-    -- Trava o boneco por 0.5s
     local oldWalkSpeed = humanoid.WalkSpeed
     local oldJumpPower = humanoid.JumpPower
     humanoid.WalkSpeed = 0
@@ -647,8 +686,8 @@ local function createFloatingEmeralds(character, assetModel)
             light.Parent = mainPart
         end
         
-        -- CRIA TRAIL NA PARTE PRINCIPAL
-        createTrailOnPart(mainPart, ChaosEmeraldColors[i])
+        -- ⭐ TRAIL PREMIUM (começa desligado, só liga ao acelerar)
+        local trail = createPremiumTrail(mainPart, ChaosEmeraldColors[i])
         
         local highlightMain = findMainPart(highlight)
         local borderMain = findMainPart(border)
@@ -659,6 +698,7 @@ local function createFloatingEmeralds(character, assetModel)
             border = border,
             light = light,
             mainPart = mainPart,
+            trail = trail,
             emeraldHighlightMain = highlightMain or mainPart,
             emeraldBorderMain = borderMain or mainPart,
             color = ChaosEmeraldColors[i]
@@ -723,4 +763,4 @@ lp.CharacterAdded:Connect(function(character)
     CarregarEsmeraldas()
 end)
 
-print("💎 Mini trails coloridos nas esmeraldas!")
+print("💎 Trail APENAS ao ACELERAR - Cor de cada esmeralda!")
