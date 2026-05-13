@@ -13,13 +13,13 @@ local IDS_CATALOGO = {
 local RING_ID = 16624478932
 
 local ChaosEmeraldColors = {
-    Color3.fromRGB(0, 255, 0),
-    Color3.fromRGB(255, 0, 0),
-    Color3.fromRGB(0, 128, 255),
-    Color3.fromRGB(255, 255, 0),
-    Color3.fromRGB(128, 0, 128),
-    Color3.fromRGB(0, 255, 255),
-    Color3.fromRGB(255, 255, 255)
+    Color3.fromRGB(0, 255, 0),      -- Verde
+    Color3.fromRGB(255, 0, 0),      -- Vermelha
+    Color3.fromRGB(0, 128, 255),    -- Azul
+    Color3.fromRGB(255, 255, 0),    -- Amarela
+    Color3.fromRGB(128, 0, 128),    -- Roxa
+    Color3.fromRGB(0, 255, 255),    -- Ciano
+    Color3.fromRGB(255, 255, 255)   -- Branca
 }
 
 local SPAWN_SOUND_ID = "rbxassetid://850177790"
@@ -79,6 +79,29 @@ local function setModelCFrame(model, mainPart, targetCFrame)
             part.CFrame = targetCFrame * offset
         end
     end
+end
+
+-- Cria trail em uma parte
+local function createTrailOnPart(part, color)
+    local attachment0 = Instance.new("Attachment")
+    attachment0.Parent = part
+    
+    local attachment1 = Instance.new("Attachment")
+    attachment1.Position = Vector3.new(0, -0.3, 0)
+    attachment1.Parent = part
+    
+    local trail = Instance.new("Trail")
+    trail.Attachment0 = attachment0
+    trail.Attachment1 = attachment1
+    trail.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), color)
+    trail.Transparency = NumberSequence.new(0.3, 0.9)
+    trail.Lifetime = 0.4
+    trail.MinLength = 0.05
+    trail.MaxLength = 0.8
+    trail.WidthScale = NumberSequence.new(0.3, 0.05)
+    trail.Parent = part
+    
+    return trail
 end
 
 local function createHighlight(emeraldClone, color)
@@ -313,7 +336,7 @@ local function scheduleRandomSpeedBoost()
     end)
 end
 
--- ================= ANIMAÇÃO DE SPAWN (BONECO PRESO 0.5s) =================
+-- ================= ANIMAÇÃO DE SPAWN =================
 local function playSpawnAnimation(emeraldData, character)
     local root = character:WaitForChild("HumanoidRootPart")
     local humanoid = character:WaitForChild("Humanoid")
@@ -323,7 +346,7 @@ local function playSpawnAnimation(emeraldData, character)
     deathProcessed = false
     deathProcessing = false
     
-    -- TRAVA O BONECO por 0.5 segundos
+    -- Trava o boneco por 0.5s
     local oldWalkSpeed = humanoid.WalkSpeed
     local oldJumpPower = humanoid.JumpPower
     humanoid.WalkSpeed = 0
@@ -375,14 +398,12 @@ local function playSpawnAnimation(emeraldData, character)
         task.wait(0.12)
     end
     
-    -- Espera 0.5s e libera o boneco
     task.wait(0.5)
     humanoid.WalkSpeed = oldWalkSpeed
     humanoid.JumpPower = oldJumpPower
     
     task.wait(0.3)
     
-    -- Inicia órbita
     isOrbiting = true
     orbitStartTime = tick()
     spawnToOrbitProgress = 0
@@ -467,7 +488,6 @@ local function onDeath(character)
     local root = character:FindFirstChild("HumanoidRootPart")
     if root then playSound(DEATH_SOUND_ID, root) end
     
-    -- 2 ANÉIS
     spawnRingsOnDeath(root)
     
     local deathData = {}
@@ -627,6 +647,9 @@ local function createFloatingEmeralds(character, assetModel)
             light.Parent = mainPart
         end
         
+        -- CRIA TRAIL NA PARTE PRINCIPAL
+        createTrailOnPart(mainPart, ChaosEmeraldColors[i])
+        
         local highlightMain = findMainPart(highlight)
         local borderMain = findMainPart(border)
         
@@ -700,4 +723,4 @@ lp.CharacterAdded:Connect(function(character)
     CarregarEsmeraldas()
 end)
 
-print("💎 Boneco preso 0.5s no spawn + 2 anéis na morte!")
+print("💎 Mini trails coloridos nas esmeraldas!")
