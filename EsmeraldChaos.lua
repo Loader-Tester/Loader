@@ -703,96 +703,57 @@ end)
 
 task.wait(1)
 
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "ChaosEmeraldNotification"
-screenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+screenGui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
 screenGui.ResetOnSpawn = false
 screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-screenGui.IgnoreGuiInset = true -- Ignora as bordas da tela
+screenGui.IgnoreGuiInset = true
 
 -- ═══════════════════════════════════════════════
--- OVERLAY GIGANTE (cobre toda tela + 5000px extra)
+-- OVERLAY GIGANTE (5000x5000)
 -- ═══════════════════════════════════════════════
 local overlay = Instance.new("Frame")
 overlay.Name = "Overlay"
-overlay.Size = UDim2.new(0, 5000, 0, 5000) -- MUITO maior que a tela
-overlay.Position = UDim2.new(0.5, -2500, 0.5, -2500) -- Centralizado
+overlay.Size = UDim2.new(0, 5000, 0, 5000)
+overlay.Position = UDim2.new(0.5, -2500, 0.5, -2500)
 overlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-overlay.BackgroundTransparency = 1 -- Começa transparente
+overlay.BackgroundTransparency = 1
 overlay.BorderSizePixel = 0
-overlay.ZIndex = 1000 -- Prioridade máxima
+overlay.ZIndex = 1000
 overlay.Parent = screenGui
 
 -- ═══════════════════════════════════════════════
--- CONTEÚDO (centralizado na tela)
+-- PARTÍCULAS DE FUNDO
 -- ═══════════════════════════════════════════════
-local contentFrame = Instance.new("Frame")
-contentFrame.Name = "Content"
-contentFrame.Size = UDim2.new(1, 0, 1, 0)
-contentFrame.Position = UDim2.new(0, 0, 0, 0)
-contentFrame.BackgroundTransparency = 1
-contentFrame.ZIndex = 1001
-contentFrame.Parent = overlay
-
--- Anel dourado no centro
-local ringFrame = Instance.new("Frame")
-ringFrame.Name = "RingFrame"
-ringFrame.Size = UDim2.new(0, 150, 0, 150)
-ringFrame.Position = UDim2.new(0.5, -75, 0.35, -75)
-ringFrame.BackgroundTransparency = 1
-ringFrame.BorderSizePixel = 0
-ringFrame.ZIndex = 1001
-ringFrame.Parent = contentFrame
-
-local ring = Instance.new("ImageLabel")
-ring.Name = "Ring"
-ring.Size = UDim2.new(1, 0, 1, 0)
-ring.Position = UDim2.new(0, 0, 0, 0)
-ring.BackgroundTransparency = 1
-ring.Image = "rbxassetid://16624478932"
-ring.ImageColor3 = Color3.fromRGB(255, 215, 0)
-ring.ZIndex = 1001
-ring.Parent = ringFrame
-
--- 7 Esmeraldas orbitando
-local emeraldColors = {
-    Color3.fromRGB(0, 255, 0),
-    Color3.fromRGB(255, 0, 0),
-    Color3.fromRGB(0, 128, 255),
-    Color3.fromRGB(255, 255, 0),
-    Color3.fromRGB(128, 0, 128),
-    Color3.fromRGB(0, 255, 255),
-    Color3.fromRGB(255, 255, 255),
-}
-
-local emeraldDots = {}
-for i = 1, 7 do
-    local dot = Instance.new("Frame")
-    dot.Name = "EmeraldDot_"..i
-    dot.Size = UDim2.new(0, 20, 0, 20)
-    dot.BackgroundColor3 = emeraldColors[i]
-    dot.BorderSizePixel = 0
-    dot.ZIndex = 1002
+for i = 1, 40 do
+    local particle = Instance.new("Frame")
+    particle.Name = "Particle_"..i
+    particle.Size = UDim2.new(0, math.random(2, 4), 0, math.random(2, 4))
+    particle.Position = UDim2.new(math.random(), 0, math.random(), 0)
+    particle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    particle.BackgroundTransparency = math.random(50, 80) / 100
+    particle.BorderSizePixel = 0
+    particle.ZIndex = 1001
     
-    local dotStroke = Instance.new("UIStroke")
-    dotStroke.Color = emeraldColors[i]
-    dotStroke.Thickness = 3
-    dotStroke.Transparency = 0.3
-    dotStroke.Parent = dot
+    local pCorner = Instance.new("UICorner")
+    pCorner.CornerRadius = UDim.new(1, 0)
+    pCorner.Parent = particle
     
-    local dotCorner = Instance.new("UICorner")
-    dotCorner.CornerRadius = UDim.new(1, 0)
-    dotCorner.Parent = dot
-    
-    dot.Parent = contentFrame
-    table.insert(emeraldDots, dot)
+    particle.Parent = overlay
 end
 
--- Título
+-- ═══════════════════════════════════════════════
+-- TÍTULO
+-- ═══════════════════════════════════════════════
 local title = Instance.new("TextLabel")
 title.Name = "Title"
 title.Size = UDim2.new(0.9, 0, 0, 80)
-title.Position = UDim2.new(0.05, 0, 0.48, 0)
+title.Position = UDim2.new(0.05, 0, 0.42, 0)
 title.BackgroundTransparency = 1
 title.Text = "CHAOS EMERALDS"
 title.TextColor3 = Color3.fromRGB(255, 215, 0)
@@ -800,123 +761,78 @@ title.TextSize = 56
 title.Font = Enum.Font.SciFi
 title.TextStrokeTransparency = 0.2
 title.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
-title.ZIndex = 1001
-title.Parent = contentFrame
+title.TextTransparency = 1
+title.ZIndex = 1002
+title.Parent = overlay
 
--- Subtítulo
+-- ═══════════════════════════════════════════════
+-- MENSAGEM
+-- ═══════════════════════════════════════════════
 local subtitle = Instance.new("TextLabel")
 subtitle.Name = "Subtitle"
 subtitle.Size = UDim2.new(0.9, 0, 0, 40)
-subtitle.Position = UDim2.new(0.05, 0, 0.58, 0)
+subtitle.Position = UDim2.new(0.05, 0, 0.53, 0)
 subtitle.BackgroundTransparency = 1
 subtitle.Text = "Script By MyNameIs909"
 subtitle.TextColor3 = Color3.fromRGB(180, 200, 255)
 subtitle.TextSize = 30
 subtitle.Font = Enum.Font.GothamBold
 subtitle.TextStrokeTransparency = 0.4
-subtitle.ZIndex = 1001
-subtitle.Parent = contentFrame
-
--- Partículas de fundo
-for i = 1, 50 do
-    local particle = Instance.new("Frame")
-    particle.Name = "Particle_"..i
-    particle.Size = UDim2.new(0, math.random(2, 5), 0, math.random(2, 5))
-    particle.Position = UDim2.new(math.random(), 0, math.random(), 0)
-    particle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    particle.BackgroundTransparency = math.random(40, 80) / 100
-    particle.BorderSizePixel = 0
-    particle.ZIndex = 1000
-    
-    local pCorner = Instance.new("UICorner")
-    pCorner.CornerRadius = UDim.new(1, 0)
-    pCorner.Parent = particle
-    
-    particle.Parent = contentFrame
-end
-
--- ═══════════════════════════════════════════════
--- ANIMAÇÕES
--- ═══════════════════════════════════════════════
-
--- Anel girando
-task.spawn(function()
-    while ringFrame and ringFrame.Parent do
-        ringFrame.Rotation = (ringFrame.Rotation + 4) % 360
-        RunService.Heartbeat:Wait()
-    end
-end)
-
--- Anel pulsando
-task.spawn(function()
-    while ring and ring.Parent do
-        for s = 1, 1.15, 0.015 do
-            ring.Size = UDim2.new(s, 0, s, 0)
-            RunService.Heartbeat:Wait()
-        end
-        for s = 1.15, 1, -0.015 do
-            ring.Size = UDim2.new(s, 0, s, 0)
-            RunService.Heartbeat:Wait()
-        end
-    end
-end)
-
--- Esmeraldas orbitando ao redor do anel
-task.spawn(function()
-    local cx, cy = 0.5, 0.35
-    local radius = 0.18
-    local time = 0
-    while emeraldDots[1] and emeraldDots[1].Parent do
-        time = time + 0.04
-        for i, dot in ipairs(emeraldDots) do
-            if dot and dot.Parent then
-                local angle = (i - 1) * (math.pi * 2 / 7) + time * 2.5
-                local x = cx + math.cos(angle) * radius
-                local y = cy + math.sin(angle) * radius
-                dot.Position = UDim2.new(x, -10, y, -10)
-                dot.BackgroundTransparency = 0.2 + math.sin(time * 4 + i) * 0.4
-            end
-        end
-        RunService.Heartbeat:Wait()
-    end
-end)
-
--- Título digitando
-local fullTitle = "CHAOS EMERALDS"
-title.Text = ""
-task.spawn(function()
-    for i = 1, #fullTitle do
-        title.Text = string.sub(fullTitle, 1, i)
-        task.wait(0.06)
-    end
-end)
-
--- Subtítulo fade in
 subtitle.TextTransparency = 1
-task.delay(1.2, function()
-    TweenService:Create(subtitle, TweenInfo.new(0.6), {TextTransparency = 0}):Play()
-end)
+subtitle.ZIndex = 1002
+subtitle.Parent = overlay
 
 -- ═══════════════════════════════════════════════
--- FADE IN (0.5s)
+-- FADE IN DO OVERLAY
 -- ═══════════════════════════════════════════════
 TweenService:Create(overlay, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
     BackgroundTransparency = 0.85
 }):Play()
 
 -- ═══════════════════════════════════════════════
--- ESPERA 3 SEGUNDOS E FADE OUT (0.5s)
+-- FADE IN DO TÍTULO
+-- ═══════════════════════════════════════════════
+task.delay(0.3, function()
+    TweenService:Create(title, TweenInfo.new(0.5), {
+        TextTransparency = 0
+    }):Play()
+end)
+
+-- ═══════════════════════════════════════════════
+-- FADE IN DA MENSAGEM
+-- ═══════════════════════════════════════════════
+task.delay(0.5, function()
+    TweenService:Create(subtitle, TweenInfo.new(0.5), {
+        TextTransparency = 0
+    }):Play()
+end)
+
+-- ═══════════════════════════════════════════════
+-- FADE OUT APÓS 3 SEGUNDOS
 -- ═══════════════════════════════════════════════
 task.delay(3.0, function()
-    if overlay and overlay.Parent then
-        local fadeOutOverlay = TweenService:Create(overlay, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
-            BackgroundTransparency = 1
-        })
-        fadeOutOverlay:Play()
-        fadeOutOverlay.Completed:Connect(function()
-            screenGui:Destroy()
-        end)
-    end
+    -- Fade out do título
+    TweenService:Create(title, TweenInfo.new(0.4), {
+        TextTransparency = 1
+    }):Play()
+    
+    -- Fade out da mensagem
+    TweenService:Create(subtitle, TweenInfo.new(0.4), {
+        TextTransparency = 1
+    }):Play()
+    
+    -- Fade out do overlay
+    task.delay(0.3, function()
+        if overlay and overlay.Parent then
+            local fadeOutOverlay = TweenService:Create(overlay, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+                BackgroundTransparency = 1
+            })
+            fadeOutOverlay:Play()
+            fadeOutOverlay.Completed:Connect(function()
+                screenGui:Destroy()
+            end)
+        end
+    end)
 end)
 
 print("💎 CHAOS EMERALDS • Script By MyNameIs909 • Carregado!")
